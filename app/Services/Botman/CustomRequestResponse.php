@@ -2,6 +2,7 @@
 
 namespace App\Services\Botman;
 
+use Illuminate\Support\Arr;
 use Symfony\Component\HttpFoundation\Response;
 
 class CustomRequestResponse
@@ -37,6 +38,16 @@ class CustomRequestResponse
         }
 
         throw new \InvalidArgumentException("Error parsing JSON response");
+    }
+
+    /**
+     * @param string $key
+     * @param null $default
+     * @return array|\ArrayAccess|mixed
+     */
+    public function getContentValue(string $key, $default = null)
+    {
+        return Arr::get($this->getContent(), $key, $default);
     }
 
     /**

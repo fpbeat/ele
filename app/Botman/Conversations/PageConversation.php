@@ -2,34 +2,32 @@
 
 namespace App\Botman\Conversations;
 
-use App\Backpack\ImageUploader;
 use App\Botman\Traits\KeyboardTrait;
 use App\Botman\Traits\MessageTrait;
+use App\Botman\Traits\UserStorage;
 use App\Models\Page;
-use BotMan\BotMan\Messages\Attachments\Image;
 use BotMan\BotMan\Messages\Incoming\Answer;
-use BotMan\BotMan\Messages\Outgoing\OutgoingMessage;
-use Illuminate\Support\Facades\Storage;
 use BotMan\Drivers\Telegram\Extensions\Keyboard;
 
 class PageConversation extends BaseConversation
 {
     use MessageTrait;
     use KeyboardTrait;
+    use UserStorage;
 
     private function askPreMessage(): void
     {
-        $message = OutgoingMessage::create($this->node->cleanDescription);
-
-        if ($this->node->image) {
-            $attachment = new Image(Storage::disk(ImageUploader::STORAGE_DISK)->url($this->node->image));
-            $message->withAttachment($attachment);
-        }
-
-        $this->ask($message, function (Answer $answer) {
+        $this->ask($this->imageMessage($this->node), function (Answer $answer) {
             if ($answer->isInteractiveMessageReply()) {
 
-                $this->deleteLastMessage($answer);
+                $image = $this->getStorageValue('image');
+                if ($image) {
+                    $this->deleteLastMessage($image);
+
+                    $this->setStorageValue('image', null);
+                }
+
+                $this->deleteLastMessage($answer->getMessage()->getPayload());
 
                 $node = Page::whereId($answer->getValue())->firstOrFail();
 

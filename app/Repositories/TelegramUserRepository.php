@@ -13,15 +13,14 @@ class TelegramUserRepository
      */
     public function store(array $data): TelegramUser
     {
-
         return TelegramUser::updateOrCreate(
             [
                 'user_id' => Arr::get($data, 'id')
             ],
             [
-                'username' => $data['username'],
+                'username' => Arr::get($data, 'username'),
                 'full_name' => $this->getFullName($data['last_name'], $data['first_name']),
-                'language_code' => $data['language_code']
+                'language_code' => Arr::get($data, 'language_code')
             ]
         );
     }

@@ -2,13 +2,45 @@
 
 namespace App\Botman\Traits;
 
-use BotMan\BotMan\Messages\Incoming\Answer;
+use App\Backpack\ImageUploader;
+use App\Models\Page;
+use App\Services\Botman\CustomRequestResponse;
+use BotMan\BotMan\Messages\Attachments\Image;
+use BotMan\BotMan\Messages\Outgoing\OutgoingMessage;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Storage;
 
-trait MessageTrait {
-    protected function deleteLastMessage(Answer $answer) {
+trait MessageTrait
+{
+    /**
+     * @param array $payload
+     */
+    protected function deleteLastMessage(array $payload): void
+    {
         $this->bot->sendRequest('deleteMessage', [
-            'chat_id' => $answer->getMessage()->getPayload()['chat']['id'],
-            'message_id' => $answer->getMessage()->getPayload()['message_id'],
+            'chat_id' => Arr::get($payload, 'chat.id'),
+            'message_id' => Arr::get($payload, 'message_id'),
         ]);
+    }
+
+    protected function imageMessage(Page $node): OutgoingMessage
+    {
+        $message = OutgoingMessage::create($node->clean_description);
+
+        if ($node->image) {
+            $attachment = new Image(Storage::disk(ImageUploader::STORAGE_DISK)->url($node->image));
+            $message->withAttachment($attachment);
+
+            if ($node->has_long_description) {
+                $message->text(null);
+
+                $response = CustomRequestResponse::loadFromResponse($this->bot->reply($message));
+                $this->setStorageValue('image', Arr::only($response->getContentValue('result'), ['message_id', 'from', 'chat']));
+
+                return OutgoingMessage::create($node->clean_description);
+            }
+        }
+
+        return $message;
     }
 }

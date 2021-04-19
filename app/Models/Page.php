@@ -17,6 +17,11 @@ class Page extends Model
     use NodeTrait;
 
     /**
+     * @var int
+     */
+    const LONG_DESCRIPTION_LENGTH = 1024;
+
+    /**
      * @var string
      */
     protected const UPLOAD_DIRECTORY = 'pages';
@@ -75,6 +80,14 @@ class Page extends Model
     public function getCleanDescriptionAttribute(): string
     {
         return Str::cleanupSummernote($this->attributes['description']);
+    }
+
+    /**
+     * @return bool
+     */
+    public function getHasLongDescriptionAttribute(): bool
+    {
+        return strlen($this->cleanDescription) >= static::LONG_DESCRIPTION_LENGTH;
     }
 
     /**
