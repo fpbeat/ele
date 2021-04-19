@@ -19,7 +19,7 @@ class TelegramUserRepository
             ],
             [
                 'username' => Arr::get($data, 'username'),
-                'full_name' => $this->getFullName($data['last_name'], $data['first_name']),
+                'full_name' => $this->getFullName(Arr::only($data, ['last_name', 'first_name'])),
                 'language_code' => Arr::get($data, 'language_code')
             ]
         );
@@ -68,13 +68,12 @@ class TelegramUserRepository
     }
 
     /**
-     * @param string|null $lastName
-     * @param string|null $firstName
+     * @param array $input
      * @return string
      */
-    private function getFullName(?string $lastName, ?string $firstName): string
+    private function getFullName(array $input): string
     {
-        return collect(func_get_args())
+        return collect($input)
             ->filter()
             ->join(' ');
     }
