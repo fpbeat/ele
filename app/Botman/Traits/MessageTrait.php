@@ -31,11 +31,10 @@ trait MessageTrait
             $attachment = new Image(Storage::disk(ImageUploader::STORAGE_DISK)->url($node->image));
             $message->withAttachment($attachment);
 
-            if ($node->has_long_description) {
-                $message->text(null);
 
-                $response = CustomRequestResponse::loadFromResponse($this->bot->reply($message));
-                $this->setStorageValue('image', Arr::only($response->getContentValue('result'), ['message_id', 'from', 'chat']));
+            if (static::IMAGE_SINGLY || $node->has_long_description) {
+                $message->text(null);
+                $this->say($message);
 
                 return OutgoingMessage::create($node->clean_description);
             }

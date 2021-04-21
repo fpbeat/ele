@@ -16,7 +16,7 @@ class CreatePagesTable extends Migration
         Schema::create('pages', function (Blueprint $table) {
             $table->id();
 
-            $table->unsignedBigInteger('type_id');
+            $table->unsignedBigInteger('type_id')->nullable();
             $table->string('name');
 
             $table->unsignedInteger('lft')->default(0);
@@ -33,7 +33,7 @@ class CreatePagesTable extends Migration
             $table->timestamps();
 
             $table->index(['lft', 'rgt', 'parent_id']);
-            $table->foreign('type_id')->references('id')->on('page_types')->onUpdate('NO ACTION')->onDelete('CASCADE');
+            $table->foreign('type_id')->references('id')->on('page_types')->onUpdate('NO ACTION')->onDelete('SET NULL');
         });
     }
 

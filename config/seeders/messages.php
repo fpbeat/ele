@@ -8,5 +8,9 @@ return [
     [
         'key' => 'telegramUserLocked',
         'message' => 'seeders.messages.telegram_user_locked'
+    ],
+    [
+        'key' => 'supportErrorMessage',
+        'message' => 'seeders.messages.support_error_message'
     ]
 ];

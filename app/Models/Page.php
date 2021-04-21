@@ -29,7 +29,7 @@ class Page extends Model
     /**
      * @var string[]
      */
-    protected $fillable = ['name', 'type_id', 'parent_id', 'buttons', 'buttons_per_row', 'description', 'image'];
+    protected $fillable = ['name', 'type_id', 'parent_id', 'buttons', 'buttons_per_row', 'buttons_navi_bottom', 'description', 'image'];
 
     /**
      * @var string[]
@@ -77,6 +77,14 @@ class Page extends Model
     /**
      * @return string
      */
+    public function getCleanNameAttribute(): string
+    {
+        return Str::cleanEmojis($this->attributes['name']);
+    }
+
+    /**
+     * @return string
+     */
     public function getCleanDescriptionAttribute(): string
     {
         return Str::cleanupSummernote($this->attributes['description']);
@@ -87,7 +95,7 @@ class Page extends Model
      */
     public function getHasLongDescriptionAttribute(): bool
     {
-        return strlen($this->cleanDescription) >= static::LONG_DESCRIPTION_LENGTH;
+        return Str::length($this->cleanDescription) >= static::LONG_DESCRIPTION_LENGTH;
     }
 
     /**

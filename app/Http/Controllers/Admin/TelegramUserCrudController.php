@@ -63,30 +63,26 @@ class TelegramUserCrudController extends CrudController
         $this->setupListFilters();
         $this->crud->removeButton('show');
         $this->crud->addButtonFromView('show', 'moderate', 'moderate', 'beginning');
+
         $this->crud->setColumns([
             [
                 'name' => 'full_name',
                 'label' => 'Пользователь',
-                'type' => 'text',
-                'searchLogic' => function ($query, $column, $searchTerm) {
-                    $query->orWhere('full_name', 'like', '%' . $searchTerm . '%');
-                }
-            ],
-            [
-                'name' => 'username',
-                'label' => 'Логин',
                 'type' => 'closure',
-                'function' => function ($entry) {
-                    return $entry->username ?? '-';
-                },
                 'searchLogic' => function ($query, $column, $searchTerm) {
-                    $query->orWhere('username', 'like', '%' . $searchTerm . '%');
-                }
+                    $query
+                        ->orWhere('full_name', 'like', '%' . $searchTerm . '%')
+                        ->orWhere('username', 'like', '%' . $searchTerm . '%');
+                },
+                'function' => function ($entry) {
+                    return sprintf('%s<br /><small>%s', $entry->full_name, $entry->telegram_web_link);
+                },
             ],
             [
                 'name' => 'lastPage',
                 'label' => 'Последня страница',
                 'type' => 'relationship',
+                'attribute' => 'clean_name',
                 'orderable' => true,
                 'orderLogic' => function ($query, $column, $columnDirection) {
                     return $query
@@ -257,7 +253,8 @@ class TelegramUserCrudController extends CrudController
             'type' => 'text',
             'name' => 'full_name',
         ], false, function ($value) {
-            $this->crud->addClause('where', 'full_name', 'LIKE', '%' . $value . '%');
+            $this->crud->addClause('orWhere', 'full_name', 'LIKE', '%' . $value . '%');
+            $this->crud->addClause('orWhere', 'username', 'LIKE', '%' . $value . '%');
         });
 
         $this->crud->addFilter([

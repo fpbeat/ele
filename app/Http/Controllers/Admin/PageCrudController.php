@@ -102,16 +102,15 @@ class PageCrudController extends CrudController
             [
                 'name' => 'name',
                 'label' => 'Имя страницы',
-                'type' => 'text'
+                'type' => 'text',
+                'tab' => trans('backpack::crud.form_tab_pages'),
             ],
             [
                 'name' => 'parent_id',
                 'label' => 'Родитель',
                 'type' => 'select2_from_array',
                 'options' => $this->pageRepository->getTreeArray(),
-                'attributes' => [
-                    'data-minimum-results-for-search' => -1
-                ]
+                'tab' => trans('backpack::crud.form_tab_pages'),
             ],
             [
                 'name' => 'type_id',
@@ -120,19 +119,22 @@ class PageCrudController extends CrudController
                 'attributes' => [
                     'data-minimum-results-for-search' => -1
                 ],
+                'tab' => trans('backpack::crud.form_tab_pages'),
             ],
             [
                 'name' => 'description',
                 'label' => 'Текст',
                 'type' => 'summernote',
                 'options' => config('backpack.fields.summernote.options'),
+                'tab' => trans('backpack::crud.form_tab_pages'),
             ],
             [
                 'label' => "Изображение",
                 'name' => "image",
                 'type' => 'image',
                 'crop' => true,
-                'disk' => ImageUploader::STORAGE_DISK
+                'disk' => ImageUploader::STORAGE_DISK,
+                'tab' => trans('backpack::crud.form_tab_pages'),
             ],
             [
                 'name' => 'buttons',
@@ -152,7 +154,8 @@ class PageCrudController extends CrudController
                         'type' => 'page_or_link',
                         'page_data' => $this->pageRepository->getTreeArray()
                     ],
-                ]
+                ],
+                'tab' => trans('backpack::crud.form_tab_buttons'),
             ],
             [
                 'name' => 'buttons_per_row',
@@ -165,7 +168,22 @@ class PageCrudController extends CrudController
                 'attributes' => [
                     'data-minimum-results-for-search' => -1
                 ],
-                'allows_null' => false
+                'allows_null' => false,
+                'tab' => trans('backpack::crud.form_tab_buttons'),
+            ],
+            [
+                'name' => 'buttons_navi_bottom',
+                'label' => 'Меню навигации отдельным рядом',
+                'type' => 'select2_from_array',
+                'options' => [
+                    1 => 'Да',
+                    0 => 'Нет',
+                ],
+                'attributes' => [
+                    'data-minimum-results-for-search' => -1
+                ],
+                'allows_null' => false,
+                'tab' => trans('backpack::crud.form_tab_buttons'),
             ]
         ]);
     }

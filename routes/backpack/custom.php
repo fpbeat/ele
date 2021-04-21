@@ -8,11 +8,7 @@
 
 Route::group(['prefix' => config('backpack.base.route_prefix', 'admin'), 'middleware' => array_merge((array)config('backpack.base.web_middleware', 'web'), (array)config('backpack.base.middleware_key', 'admin')), 'namespace' => 'App\Http\Controllers\Admin'], function () {
     // CRUD
-    Route::crud('coupon', 'CouponCrudController');
     Route::crud('message', 'MessageCrudController');
-    Route::crud('subscription', 'SubscriptionCrudController');
-    Route::crud('channel', 'ChannelCrudController');
-    Route::crud('member', 'MemberCrudController');
 
     // Activities charts
     Route::get('charts/activity/hourly', 'Charts\ActivityHourlyController@response')
@@ -30,5 +26,6 @@ Route::group(['prefix' => config('backpack.base.route_prefix', 'admin'), 'middle
         ->where('interval', 'hourly|daily|monthly|yearly')
         ->name('backpack.chart.interval');
     Route::crud('page', 'PageCrudController');
+    Route::crud('setting', 'SettingCrudController');
     Route::crud('telegram/user', 'TelegramUserCrudController');
 }); // this should be the absolute last line of this file

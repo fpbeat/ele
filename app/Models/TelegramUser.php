@@ -26,6 +26,14 @@ class TelegramUser extends Model
     }
 
     /**
+     * @return string|null
+     */
+    public function getTelegramWebLinkAttribute(): ?string
+    {
+        return $this->attributes['username'] ? sprintf('<a href="https://t.me/%s" target="_blank">%s</a>', $this->attributes['username'], $this->attributes['username']) : null;
+    }
+
+    /**
      * @return bool
      */
     public function getIsActiveAttribute(): bool

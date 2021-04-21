@@ -4,6 +4,7 @@ namespace App\Repositories;
 
 use App\Models\TelegramUser;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
 
 class TelegramUserRepository
 {
@@ -64,6 +65,7 @@ class TelegramUserRepository
     {
         return TelegramUser::groupByLastPage()
             ->pluck('name', 'last_page_id')
+            ->map(fn($item) => Str::cleanEmojis($item))
             ->toArray();
     }
 

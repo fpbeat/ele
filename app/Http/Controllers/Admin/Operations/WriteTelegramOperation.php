@@ -20,10 +20,6 @@ trait WriteTelegramOperation
     /**
      * @param TelegramUserMessageRepository $telegramUserMessageRepository
      */
-    public function __construct(TelegramUserMessageRepository $telegramUserMessageRepository)
-    {
-        $this->telegramUserMessageRepository = $telegramUserMessageRepository;
-    }
 
     /**
      * @param string $segment
@@ -81,7 +77,7 @@ trait WriteTelegramOperation
         $this->data['entry'] = $this->crud->getEntry($id);
         $this->data['saveAction'] = $this->crud->getSaveAction();
 
-        return view("crud::write_telegram", $this->data);
+        return view("crud::operations.write_telegram", $this->data);
     }
 
     /**

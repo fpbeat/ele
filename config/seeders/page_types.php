@@ -8,5 +8,9 @@ return [
     [
         'name' => 'seeders.page_types.review',
         'conversation' => App\Botman\Conversations\ReviewConversation::class,
+    ],
+    [
+        'name' => 'seeders.page_types.contact',
+        'conversation' => App\Botman\Conversations\ContactsConversation::class,
     ]
 ];

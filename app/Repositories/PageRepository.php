@@ -22,11 +22,12 @@ class PageRepository
         return $tree;
     }
 
-    public function getRoot()
+    /**
+     * @return Page
+     */
+    public function getRootNode(): Page
     {
-        $node = Page::whereIsRoot()->firstOrFail();
-
-        return $node;
+        return Page::whereIsRoot()->firstOrFail();
     }
 
     /**

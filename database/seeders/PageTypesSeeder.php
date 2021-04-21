@@ -12,8 +12,6 @@ class PageTypesSeeder extends Seeder
      */
     public function run(): void
     {
-        DB::table('page_types')->truncate();
-
         foreach (config('seeders.page_types') as $type) {
             DB::table('page_types')->insert(array_merge($type, [
                 'name' => trans($type['name']),

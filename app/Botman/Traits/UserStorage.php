@@ -9,7 +9,7 @@ trait UserStorage
     /**
      * @var string
      */
-    private static $storageNamespace = 'chatbot';
+    private static string $storageNamespace = 'chatbot';
 
     /**
      * @param string|null $key

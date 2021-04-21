@@ -12,8 +12,6 @@ class PagesSeeder extends Seeder
      */
     public function run(): void
     {
-        DB::table('pages')->truncate();
-
         DB::table('pages')->insert(array_merge(config('seeders.pages'), [
             'name' => trans(config('seeders.pages.name')),
             'created_at' => now(),
