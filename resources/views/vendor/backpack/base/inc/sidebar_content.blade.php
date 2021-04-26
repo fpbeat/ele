@@ -15,7 +15,7 @@
 
 <li class='nav-item'><a class='nav-link' href='{{ backpack_url('telegram/user') }}'><i class='nav-icon la la-telegram'></i> Посетители</a></li>
 
-<li class='nav-item'><a class='nav-link' href='javascript:alert("Not implemented")'><i class='nav-icon la la-headset'></i> Обратная связь</a></li>
+<li class='nav-item'><a class='nav-link' href='{{ backpack_url('feedback') }}'><i class='nav-icon la la-headset'></i> Обратная связь</a></li>
 
 <li class='nav-item'><a class='nav-link' href='{{ backpack_url('setting') }}'><i class='nav-icon la la-cog'></i> Настройки</a></li>
 

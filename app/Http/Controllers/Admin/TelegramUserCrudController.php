@@ -2,11 +2,15 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Facades\Message;
 use App\Http\Controllers\Admin\Operations\WriteTelegramOperation;
 use App\Http\Requests\WriteTelegramUserRequest;
 use App\Models\TelegramUser;
 use App\Repositories\{TelegramUserMessageRepository, TelegramUserRepository};
-use Backpack\CRUD\app\Http\Controllers\{CrudController, Operations\ListOperation, Operations\ShowOperation, Operations\UpdateOperation};
+use Backpack\CRUD\app\Http\Controllers\{CrudController,
+    Operations\ListOperation,
+    Operations\ShowOperation,
+    Operations\UpdateOperation};
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
 use Illuminate\Support\Facades\Auth;
 
@@ -165,29 +169,34 @@ class TelegramUserCrudController extends CrudController
     {
         $this->crud->setValidation(WriteTelegramUserRequest::class);
 
-
         $this->crud->addFields([
             [
                 'type' => 'messages',
-                'name' => 'super',
+                'name' => 'messages',
                 'values' => $this->telegramUserMessageRepository->getAllByUserId($this->crud->getCurrentEntry()->id)
-            ],
-            [
-                'type' => 'hidden',
-                'name' => 'author_id',
-                'value' => Auth::guard('backpack')->user()->getAuthIdentifier()
-            ],
-            [
-                'type' => 'hidden',
-                'name' => 'user_id',
-                'value' => $this->crud->getCurrentEntry()->id
             ],
             [
                 'name' => 'message',
                 'label' => 'Сообщение',
                 'type' => 'summernote',
-                'options' => config('backpack.fields.summernote.options'),
+                'options' => config('backpack.fields.summernote.options')
             ]
+        ]);
+    }
+
+
+    /**
+     * @inheritDoc
+     */
+    protected function getWriteTelegramRequest(array $request): array
+    {
+        $entry = $this->crud->getCurrentEntry();
+
+        return array_merge($request, [
+            'author_id' => Auth::guard('backpack')->user()->getAuthIdentifier(),
+            'user_id' => $entry->id,
+            'caption_text' => Message::get('writeTelegramUser'),
+            'event' => 'user'
         ]);
     }
 

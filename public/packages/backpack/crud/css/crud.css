@@ -1,5 +1,19 @@
-/*
-*
-* Backpack Crud
-*
-*/
+.btn-no-active {
+    cursor: default !important;
+}
+
+.btn-no-active:hover {
+    background-color: transparent !important;
+}
+
+.btn-no-active.btn-outline-success:hover {
+    color: #42ba96 !important;
+}
+
+.btn-no-active.btn-outline-danger:hover {
+    color: #df4759 !important;
+}
+
+.btn-table-user:hover {
+    background-color: #FFF !important;
+}

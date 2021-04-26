@@ -16,7 +16,7 @@ class TelegramUserMessage extends Model
     /**
      * @var string[]
      */
-    protected $fillable = ['user_id', 'author_id', 'is_sent', 'message'];
+    protected $fillable = ['user_id', 'author_id', 'is_sent', 'event', 'message'];
 
     /**
      * @param string $value

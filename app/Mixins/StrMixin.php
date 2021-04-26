@@ -62,4 +62,18 @@ class StrMixin
             return trim($text);
         };
     }
+
+    /**
+     * @return \Closure
+     */
+    public function wordwrap(): \Closure
+    {
+        return function (string $string, int $width = 75, string $break = "\n", bool $cut = true) {
+            if ($cut) {
+                return preg_replace('/(.{1,' . $width . '})(?:\s|$)|(.{' . $width . '})/uS', '$1$2' . $break, $string);
+            }
+
+            return preg_replace('/(?=\s)(.{1,' . $width . '})(?:\s|$)/uS', '$1' . $break, $string);
+        };
+    }
 }

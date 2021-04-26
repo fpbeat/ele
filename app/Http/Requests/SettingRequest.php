@@ -21,7 +21,7 @@ class SettingRequest extends FormRequest
     {
         return [
             'contact__address' => 'required',
-          //  'contact__name' => 'required'
+            'feedback__redirect' => 'required'
         ];
     }
 }

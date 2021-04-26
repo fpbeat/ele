@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Admin\Operations\SettingOperation;
 use App\Http\Requests\SettingRequest;
 use App\Models\Setting as SettingModel;
+use App\Repositories\PageRepository;
+use App\Repositories\SettingRepository;
 use Backpack\CRUD\app\Http\Controllers\{CrudController, Operations\ListOperation};
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
 
@@ -17,6 +19,24 @@ class SettingCrudController extends CrudController
 {
     use ListOperation;
     use SettingOperation;
+
+    /**
+     * @var PageRepository
+     */
+    private PageRepository $pageRepository;
+
+    /**
+     * @var SettingRepository
+     */
+    protected SettingRepository $settingRepository;
+
+    public function __construct(SettingRepository $settingRepository, PageRepository $pageRepository)
+    {
+        parent::__construct();
+
+        $this->settingRepository = $settingRepository;
+        $this->pageRepository = $pageRepository;
+    }
 
     /**
      * @return void
@@ -36,6 +56,16 @@ class SettingCrudController extends CrudController
     {
         $this->crud->setValidation(SettingRequest::class);
 
+        $this->contactsFields();
+        $this->feedbackFields();
+        $this->notificationsFields();
+    }
+
+    /**
+     * @return void
+     */
+    private function contactsFields()
+    {
         $this->crud->addFields([
             [
                 'type' => 'address_algolia',
@@ -43,12 +73,67 @@ class SettingCrudController extends CrudController
                 'label' => 'Адрес магазина',
                 'tab' => trans('backpack::crud.form_tab_contacts'),
                 'store_as_json' => true
+            ]
+        ]);
+    }
+
+    /**
+     * @return void
+     */
+    private function notificationsFields()
+    {
+        $this->crud->addFields([
+            [
+                'type' => 'select2_from_array',
+                'name' => 'notifications__events',
+                'label' => 'Уведомлять о событиях',
+                'attributes' => [
+                    'multiple' => true
+                ],
+                'options' => [
+                    1 => 'Новый заказ',
+                    2 => 'Новый отзыв',
+                    3 => 'Новое предоложение',
+                ],
+                'allows_null' => false,
+                'tab' => trans('backpack::crud.form_tab_notifications'),
             ],
-//            [
-//                'type' => 'text',
-//                'name' => 'Описание',
-//                'tab' => trans('backpack::crud.form_tab_contacts'),
-//            ]
+            [
+                'type' => 'table',
+                'name' => 'notifications__groups',
+                'label' => 'ID Telegram групп',
+                'entity_singular' => 'группу',
+                'columns' => [
+                    'id' => '',
+                ],
+                'min' => 1,
+                'tab' => trans('backpack::crud.form_tab_notifications'),
+            ]
+        ]);
+    }
+
+    /**
+     * @return void
+     */
+    private function feedbackFields(): void
+    {
+        $this->crud->addFields([
+            [
+                'type' => 'select2_from_array',
+                'name' => 'feedback__redirect',
+                'label' => 'Открыть после действия',
+                'options' => $this->pageRepository->getTreeArray(),
+                'allows_null' => false,
+                'tab' => trans('backpack::crud.form_tab_feedback'),
+            ],
+            [
+
+                'type' => 'number',
+                'name' => 'feedback__redirect_delay',
+                'label' => 'Задержка перед открытием, сек.',
+                'default' => 2,
+                'tab' => trans('backpack::crud.form_tab_feedback'),
+            ]
         ]);
     }
 }

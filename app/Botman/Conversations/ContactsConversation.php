@@ -54,7 +54,7 @@ class ContactsConversation extends NodeConversation implements NodeConversationI
     {
         if ($this->coordinates) {
             $attachment = new Location(...$this->coordinates);
-            $this->say(OutgoingMessage::create()->withAttachment($attachment));
+            $this->bot->reply(OutgoingMessage::create()->withAttachment($attachment));
         }
     }
 

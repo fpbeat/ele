@@ -18,10 +18,6 @@ trait WriteTelegramOperation
     private TelegramUserMessageRepository $telegramUserMessageRepository;
 
     /**
-     * @param TelegramUserMessageRepository $telegramUserMessageRepository
-     */
-
-    /**
      * @param string $segment
      * @param string $routeName
      * @param string $controller
@@ -81,18 +77,20 @@ trait WriteTelegramOperation
     }
 
     /**
+     * @param $id
      * @return RedirectResponse
      */
-    public function postWriteTelegramForm(): RedirectResponse
+    public function postWriteTelegramForm($id): RedirectResponse
     {
         $this->crud->hasAccessOrFail('write');
 
         $this->crud->validateRequest();
+        $request = $this->getWriteTelegramRequest($this->crud->getStrippedSaveRequest());
 
-        $message = $this->telegramUserMessageRepository->store($this->crud->getStrippedSaveRequest());
+        $message = $this->telegramUserMessageRepository->store($request);
 
         try {
-            TelegramClient::sendMessage($message->user->user_id, Message::get('writeTelegramUser') . "\n\n" . $message->message);
+            TelegramClient::sendMessage($message->user->user_id, $request['caption_text'] . "\n" . $message->message);
             $this->telegramUserMessageRepository->setSentStatus($message->id);
 
             \Alert::success(trans('backpack::crud.telegram_write_success'))->flash();
@@ -100,6 +98,12 @@ trait WriteTelegramOperation
             \Alert::error(trans('backpack::crud.telegram_write_failed'))->flash();
         }
 
-        return \Redirect::to($this->crud->route . '/' . $message->user->id . '/write');
+        return \Redirect::to($this->crud->route . '/' . $id . '/write');
     }
+
+    /**
+     * @param array $request
+     * @return array
+     */
+    abstract protected function getWriteTelegramRequest(array $request): array;
 }

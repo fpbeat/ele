@@ -3,15 +3,17 @@
 namespace App\Http\Controllers;
 
 use App\Botman\Conversations\PageConversation;
+use App\Botman\Middlewares\CapturedMiddleware;
 use App\Botman\Middlewares\ReceivedMiddleware;
-use App\Botman\Traits\KeyboardTrait;
+use App\Botman\Traits\MessageTrait;
 use App\Facades\Message;
+use App\Models\Page;
 use App\Repositories\PageRepository;
 use BotMan\BotMan\BotMan;
 
 class BotmanController extends Controller
 {
-    use KeyboardTrait;
+    use MessageTrait;
 
     /**
      * @var PageRepository
@@ -27,20 +29,19 @@ class BotmanController extends Controller
     {
         $botman = app('botman');
 
-        //    $page = Page::whereId(30)->firstOrFail();
+//        $node = resolve(PageRepository::class)->getById(30)->firstOrFail();
 
         try {
             $botman->hears('/start', function (BotMan $bot) {
-                $bot->startConversation(resolve(PageConversation::class, [
-                    'node' => $this->pageRepository->getRootNode()
-                ]));
+                $this->nodeConversation($this->pageRepository->getRootNode(), $bot);
             });
 
             $botman->middleware->received(resolve(ReceivedMiddleware::class));
+            $botman->middleware->captured(resolve(CapturedMiddleware::class));
             $botman->listen();
 
         } catch (\Throwable $e) {
-            $botman->reply(Message::get('supportErrorMessage'));
+            $botman->reply(Message::get('supportErrorMessage') . $e->getMessage());
         }
     }
 }

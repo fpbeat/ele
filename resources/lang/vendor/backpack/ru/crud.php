@@ -16,5 +16,11 @@ return [
 
     'form_tab_pages' => 'Страница',
     'form_tab_buttons' => 'Кнопки',
-    'form_tab_contacts' => 'Контакты'
+    'form_tab_contacts' => 'Контакты',
+    'form_tab_feedback' => 'Обратная связь',
+    'form_tab_notifications' => 'Уведомления',
+
+    'feedback_type_review' => 'Отзыв',
+    'feedback_type_proposal' => 'Предложение',
+
 ];

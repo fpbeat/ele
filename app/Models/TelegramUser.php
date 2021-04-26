@@ -42,6 +42,14 @@ class TelegramUser extends Model
     }
 
     /**
+     * @return bool
+     */
+    public function getCanWriteTelegramAttribute(): bool
+    {
+        return true;
+    }
+
+    /**
      * @return BelongsTo
      */
     public function lastPage(): BelongsTo
@@ -49,6 +57,10 @@ class TelegramUser extends Model
         return $this->belongsTo(Page::class);
     }
 
+    /**
+     * @param Builder $query
+     * @return Builder
+     */
     public function scopeGroupByLastPage(Builder $query): Builder
     {
         return $query

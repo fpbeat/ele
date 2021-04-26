@@ -3,7 +3,11 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Requests\MessageRequest;
-use Backpack\CRUD\app\{Http\Controllers\CrudController, Http\Controllers\Operations\ListOperation, Http\Controllers\Operations\UpdateOperation, Library\CrudPanel\CrudPanelFacade as CRUD};
+use Backpack\CRUD\app\{Http\Controllers\CrudController,
+    Http\Controllers\Operations\ListOperation,
+    Http\Controllers\Operations\UpdateOperation,
+    Library\CrudPanel\CrudPanelFacade as CRUD
+};
 use Illuminate\Support\Str;
 
 /**
@@ -15,6 +19,11 @@ class MessageCrudController extends CrudController
 {
     use ListOperation;
     use UpdateOperation;
+
+    /**
+     * @var int
+     */
+    const MESSAGE_WRAP_LENGTH = 85;
 
     /**
      * @return void
@@ -50,7 +59,7 @@ class MessageCrudController extends CrudController
                 'label' => 'Сообщение',
                 'priority' => 0,
                 'function' => function ($entry) {
-                    return Str::cleanupSummernote($entry->message);
+                    return nl2br(Str::wordwrap($entry->clean_message, self::MESSAGE_WRAP_LENGTH));
                 },
                 'searchLogic' => function ($query, $column, $searchTerm) {
                     $query->orWhere('message', 'like', '%' . $searchTerm . '%');

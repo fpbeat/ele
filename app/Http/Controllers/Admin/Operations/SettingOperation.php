@@ -2,29 +2,13 @@
 
 namespace App\Http\Controllers\Admin\Operations;
 
-use App\Models\Setting;
-use App\Repositories\SettingRepository;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 trait SettingOperation
 {
-    /**
-     * @var SettingRepository
-     */
-    private SettingRepository $settingRepository;
-
-    /**
-     * @param SettingRepository $settingRepository
-     */
-    public function __construct(SettingRepository $settingRepository)
-    {
-        parent::__construct();
-
-        $this->settingRepository = $settingRepository;
-    }
-
     /**
      * @param string $segment Name of the current entity (singular). Used as first URL segment.
      * @param string $routeName Prefix of the route name.
@@ -81,9 +65,10 @@ trait SettingOperation
     }
 
     /**
+     * @param Request $request
      * @return RedirectResponse
      */
-    public function postSetting(): RedirectResponse
+    public function postSetting(Request $request): RedirectResponse
     {
         $this->crud->hasAccessOrFail('setting');
 
@@ -93,6 +78,20 @@ trait SettingOperation
 
         \Alert::success(trans('backpack::crud.setting_update_success'))->flash();
 
-        return \Redirect::to($this->crud->route);
+        return \Redirect::to($this->getRedirectRoute($request));
+    }
+
+
+    /**
+     * @param Request $request
+     * @return string
+     */
+    private function getRedirectRoute(Request $request): string
+    {
+        if ($request->has('current_tab')) {
+            return sprintf('%s#%s', $this->crud->route, $request->get('current_tab'));
+        }
+
+        return $this->crud->route;
     }
 }

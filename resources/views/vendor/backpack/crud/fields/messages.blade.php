@@ -2,13 +2,19 @@
 
 @php
     $column['format'] = $column['format'] ?? config('backpack.base.default_datetime_format');
+    $icons = [
+        'user'=> 'la-user',
+        'review' => 'la-headset',
+        'proposal' => 'la-headset'
+    ];
 @endphp
 
 <div class="list-group">
     @forelse($field['values'] as $value)
         <div class="list-group-item flex-column align-items-start @if (!$value->is_sent) list-group-item-danger @endif">
-            <p class="mb-1">{!! nl2br($value->message) !!}</p>
+            <p class="mb-1"><i class="la {{ $icons[$value->event] }}"></i> {!! nl2br($value->message) !!}</p>
             <small class="text-muted">{{ \Carbon\Carbon::parse($value->created_at)->locale(App::getLocale())->isoFormat($column['format']) }} @if (!$value->is_sent) ({{ trans('backpack::crud.message_no_sent') }}) @endif</small>
+
         </div>
     @empty
         <div class="list-group">

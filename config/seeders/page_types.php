@@ -10,7 +10,12 @@ return [
         'conversation' => App\Botman\Conversations\ReviewConversation::class,
     ],
     [
+        'name' => 'seeders.page_types.proposal',
+        'conversation' => App\Botman\Conversations\ProposalConversation::class,
+    ],
+    [
         'name' => 'seeders.page_types.contact',
         'conversation' => App\Botman\Conversations\ContactsConversation::class,
-    ]
+    ],
+
 ];

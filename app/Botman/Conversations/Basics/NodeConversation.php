@@ -2,12 +2,9 @@
 
 namespace App\Botman\Conversations\Basics;
 
-use App\Botman\Conversations\PageConversation;
-
-use App\Botman\Traits\{KeyboardTrait, MessageTrait};
 use App\Models\Page;
-use App\Repositories\PageRepository;
-use App\Repositories\TelegramUserRepository;
+use App\Botman\Traits\{KeyboardTrait, MessageTrait};
+use App\Repositories\{PageRepository, TelegramUserRepository};
 use BotMan\BotMan\Messages\Incoming\Answer;
 use BotMan\Drivers\Telegram\Extensions\Keyboard;
 
@@ -19,7 +16,12 @@ abstract class NodeConversation extends BaseConversation
     /**
      * @var bool
      */
-    const IMAGE_SINGLY = false;
+    protected const IMAGE_SINGLY = false;
+
+    /**
+     * @var string
+     */
+    protected const KEYBOARD_TYPE = Keyboard::TYPE_INLINE;
 
     /**
      * @var Page
@@ -34,7 +36,12 @@ abstract class NodeConversation extends BaseConversation
     /**
      * @var TelegramUserRepository
      */
-    private TelegramUserRepository $telegramUserRepository;
+    protected TelegramUserRepository $telegramUserRepository;
+
+    /**
+     * @var bool
+     */
+    protected bool $isReplyKeyboardAnswer = false;
 
     /**
      * @param Page $node
@@ -58,11 +65,9 @@ abstract class NodeConversation extends BaseConversation
             if ($answer->isInteractiveMessageReply()) {
                 $node = $this->pageRepository->getById($answer->getValue());
 
-                $this->bot->startConversation(resolve($node->type->conversation ?? PageConversation::class, [
-                    'node' => $node
-                ]));
+                $this->nodeConversation($node);
             } else {
-                $this->repeat();
+                $this->handleTextAnswer($answer);
             }
         }, $this->keyboard());
     }
@@ -73,7 +78,7 @@ abstract class NodeConversation extends BaseConversation
     public function keyboard(): array
     {
         $keyboard = Keyboard::create()
-            ->type(Keyboard::TYPE_INLINE)
+            ->type(static::KEYBOARD_TYPE)
             ->oneTimeKeyboard()
             ->resizeKeyboard();
 
@@ -94,5 +99,29 @@ abstract class NodeConversation extends BaseConversation
     private function updateUserLastPage(): void
     {
         $this->telegramUserRepository->updateLastPage($this->bot->getUser()->getId(), $this->node->id);
+    }
+
+    /**
+     * @param Answer $answer
+     */
+    protected function handleTextAnswer(Answer $answer): void
+    {
+        switch (static::KEYBOARD_TYPE) {
+            case Keyboard::TYPE_KEYBOARD:
+                $answerButton = $this->getAnswerButtonId($answer->getText());
+
+                if ($answerButton) {
+                    $this->isReplyKeyboardAnswer = true;
+
+                    $node = $this->pageRepository->getById($answerButton);
+                    $this->say(trans('chatbot.keyboard_handle_open', ['name' => $node->name]), $this->removeKeyboard());
+
+                    $this->nodeConversation($node);
+                }
+
+                break;
+            default:
+                $this->repeat();
+        }
     }
 }
