@@ -58,7 +58,7 @@ class FeedbackCrudController extends CrudController
     {
         CRUD::setModel(Feedback::class);
         CRUD::setRoute(config('backpack.base.route_prefix') . '/feedback');
-        CRUD::setEntityNameStrings('посетителей', 'посетители');
+        CRUD::setEntityNameStrings('записи', 'обратная связь');
     }
 
     /**
