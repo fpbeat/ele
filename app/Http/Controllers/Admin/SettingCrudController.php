@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Admin\Operations\SettingOperation;
 use App\Http\Requests\SettingRequest;
 use App\Models\Setting as SettingModel;
+use App\Notifications\SendFeedback;
 use App\Repositories\PageRepository;
 use App\Repositories\SettingRepository;
 use Backpack\CRUD\app\Http\Controllers\{CrudController, Operations\ListOperation};
@@ -87,15 +88,13 @@ class SettingCrudController extends CrudController
                 'type' => 'select2_from_array',
                 'name' => 'notifications__events',
                 'label' => 'Уведомлять о событиях',
-                'attributes' => [
-                    'multiple' => true
-                ],
                 'options' => [
-                    1 => 'Новый заказ',
-                    2 => 'Новый отзыв',
-                    3 => 'Новое предоложение',
+                    'order' => 'Новый заказ',
+                    'review' => 'Новый отзыв',
+                    'proposal' => 'Новое предложение',
                 ],
                 'allows_null' => false,
+                'allows_multiple' => true,
                 'tab' => trans('backpack::crud.form_tab_notifications'),
             ],
             [
@@ -108,6 +107,12 @@ class SettingCrudController extends CrudController
                 ],
                 'min' => 1,
                 'tab' => trans('backpack::crud.form_tab_notifications'),
+            ],
+            [
+                'tab' => trans('backpack::crud.form_tab_notifications'),
+                'name'  => 'notifications__time_range',
+                'label' => 'Время рассылки',
+                'type'  => 'time_range'
             ]
         ]);
     }

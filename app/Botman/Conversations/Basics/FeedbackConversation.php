@@ -4,7 +4,9 @@ namespace App\Botman\Conversations\Basics;
 
 use App\Botman\Traits\UserStorage;
 use App\Models\Page;
+use App\Services\NotificationService;
 use BotMan\Drivers\Telegram\Extensions\Keyboard;
+use Illuminate\Contracts\Container\BindingResolutionException;
 use App\Facades\{Message, Setting};
 use App\Repositories\FeedbackRepository;
 use BotMan\BotMan\Messages\Incoming\Answer;
@@ -26,19 +28,21 @@ class FeedbackConversation extends NodeConversation
     /**
      * @param Answer $answer
      * @param callable|null $answerCallback
+     * @throws BindingResolutionException
      */
     protected function handleTextAnswer(Answer $answer, ?callable $answerCallback = null): void
     {
         parent::handleTextAnswer($answer);
 
         if (!$this->isReplyKeyboardAnswer) {
-            resolve(FeedbackRepository::class)->store(
+            $feedback = resolve(FeedbackRepository::class)->store(
                 $this->telegramUserRepository->getByUserId($this->bot->getUser()->getId()),
                 $answer->getText(),
                 static::FEEDBACK_TYPE
             );
 
             $this->say(Message::get(static::FEEDBACK_MESSAGE_KEY), $this->removeKeyboard());
+            resolve(NotificationService::class)->sendIfEnabled($feedback->type, $feedback);
 
             $this->bot->typesAndWaits($this->getWaitingDelay());
             $this->nodeConversation($this->getRedirectConversation());

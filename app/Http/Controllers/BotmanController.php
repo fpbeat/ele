@@ -2,12 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Botman\Conversations\PageConversation;
 use App\Botman\Middlewares\CapturedMiddleware;
 use App\Botman\Middlewares\ReceivedMiddleware;
 use App\Botman\Traits\MessageTrait;
 use App\Facades\Message;
-use App\Models\Page;
 use App\Repositories\PageRepository;
 use BotMan\BotMan\BotMan;
 
@@ -28,8 +26,6 @@ class BotmanController extends Controller
     public function handle()
     {
         $botman = app('botman');
-
-//        $node = resolve(PageRepository::class)->getById(30)->firstOrFail();
 
         try {
             $botman->hears('/start', function (BotMan $bot) {

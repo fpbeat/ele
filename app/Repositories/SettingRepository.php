@@ -3,12 +3,24 @@
 namespace App\Repositories;
 
 use App\Models\Setting;
+use App\Traits\SettingsCast;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Support\{Collection, Str};
 use Tightenco\Collect\Support\Arr;
 
 class SettingRepository implements Arrayable
 {
+    use SettingsCast;
+
+    /**
+     * @var string[]
+     */
+    protected array $settingCasts = [
+        'notifications.time_range' => 'collection',
+        'notifications.groups' => 'collection',
+        'notifications.events' => 'collection'
+    ];
+
     /**
      * @var string
      */
@@ -71,13 +83,16 @@ class SettingRepository implements Arrayable
         return (self::$cache ?? $this->getGrouped())->toArray();
     }
 
+
     /**
      * @param string $key
      * @param null $default
-     * @return array|\ArrayAccess|mixed
+     * @return mixed
      */
     public function get(string $key, $default = null)
     {
-        return Arr::get($this->toArray(), $key, $default);
+        $value = Arr::get($this->toArray(), $key, $default);
+
+        return $this->hasCast($key) ? $this->castAttribute($key, $value) : $value;
     }
 }

@@ -144,10 +144,13 @@ return [
         'year' => 'Год',
         'image' => 'Изображение',
         'parent_id' => 'Родитель',
-        'message' => 'Сообщение'
+        'message' => 'Сообщение',
+        'mailing_time' => 'Время рассылки'
     ],
 
     'custom' => [
-        'root_delete' => 'Вы не можете удалить начальную страницу'
+        'root_delete' => 'Вы не можете удалить начальную страницу',
+        'time_range_start_required' => 'Поле :attribute (от) должно содержать время' ,
+        'time_range_end_required' => 'Поле :attribute (до) должно содержать время'
     ],
 ];

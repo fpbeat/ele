@@ -6,6 +6,8 @@ use App\Contracts\Botman\CustomRequestInterface;
 use App\Services\Botman\CustomRequest;
 use BotMan\Drivers\Telegram\TelegramDriver;
 use Illuminate\Support\Facades\{DB, File};
+use Illuminate\Contracts\Container\Container;
+use Illuminate\Foundation\Application;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider

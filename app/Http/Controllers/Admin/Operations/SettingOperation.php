@@ -74,13 +74,12 @@ trait SettingOperation
 
         $this->crud->validateRequest();
 
-        $this->settingRepository->store($this->settingRepository->getSettingRecord(), $this->crud->getStrippedSaveRequest());
+        $this->settingRepository->store($this->settingRepository->getSettingRecord(), $this->crud->getStrippedSaveRequest())    ;
 
         \Alert::success(trans('backpack::crud.setting_update_success'))->flash();
 
         return \Redirect::to($this->getRedirectRoute($request));
     }
-
 
     /**
      * @param Request $request

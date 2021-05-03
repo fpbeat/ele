@@ -5,6 +5,7 @@ namespace App\Providers;
 use App\Repositories\MessageRepository;
 use App\Repositories\SettingRepository;
 use App\Services\TelegramClientService;
+use App\Supports\ReflectionSupport;
 use Illuminate\Support\ServiceProvider;
 
 class FacadeServiceProvider extends ServiceProvider
@@ -18,6 +19,10 @@ class FacadeServiceProvider extends ServiceProvider
     {
         app()->singleton('message', function () {
             return new MessageRepository;
+        });
+
+        app()->singleton('reflection', function () {
+            return new ReflectionSupport;
         });
 
         app()->singleton('setting', function () {
