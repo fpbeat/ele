@@ -65,8 +65,6 @@
                 document.emojiButton = 'las la-smile';
                 document.emojiType = 'unicode';
                 document.emojiSource = '{{ asset('packages/summernote/dist/plugin/tam-emoji/img') }}';
-
-                console.log(element.data('options'));
                 element.summernote(element.data('options'));
             }
         </script>

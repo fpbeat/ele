@@ -5,11 +5,22 @@ return [
         'name' => 'Головне меню'
     ],
 
+    'categories' => [
+       'name' => 'Корневая категория'
+    ],
+
     'page_types' => [
         'text' => 'Текстовая',
         'review' => 'Отзывы',
         'proposal' => 'Предложения',
         'contact' => 'Контакты'
+    ],
+
+    'unit_types' => [
+        'gram' => 'грамм',
+        'kilogram' => 'килограмм',
+        'piece' => 'штука',
+        'jar' => 'банка'
     ],
 
     'messages' => [

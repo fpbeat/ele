@@ -41,7 +41,7 @@ class MessageCrudController extends CrudController
      */
     protected function setupListOperation(): void
     {
-        $this->crud->setDefaultPageLength(50);
+        $this->crud->setDefaultPageLength(-1);
 
         $this->crud->setColumns([
             [

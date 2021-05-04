@@ -2,6 +2,7 @@
 
 namespace App\Backpack;
 
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Intervention\Image\ImageManagerStatic as Image;
@@ -57,6 +58,42 @@ class ImageUploader
     }
 
     /**
+     * @param $attribute
+     * @param string $attributeName
+     * @param string $uploadDirectory
+     * @return false|string
+     */
+    public function uploadMultiple($attribute, string $attributeName, string $uploadDirectory)
+    {
+        $attributeValue = is_array($attribute) ? $attribute : json_decode($attribute, true) ?? [];
+
+        foreach (request()->get('clear_' . $attributeName, []) as $filename) {
+            \Storage::disk(static::STORAGE_DISK)->delete($filename);
+
+            $attributeValue = Arr::where($attributeValue, fn($value) => $value != $filename);
+        }
+
+        if (request()->hasFile($attributeName)) {
+            foreach (request()->file($attributeName) as $file) {
+                if ($file->isValid()) {
+                    $image = Image::make($file->path())
+                        ->resize(static::IMAGE_MAX_WIDTH, null, function ($constraint) {
+                            $constraint->aspectRatio();
+                            $constraint->upsize();
+                        });
+
+                    $filename = $uploadDirectory . '/' . $this->getRandomFileName($file, $file->getClientOriginalExtension());
+                    Storage::disk(static::STORAGE_DISK)->put($filename, $image->stream());
+
+                    $attributeValue[] = $filename;
+                }
+            }
+        }
+
+        return json_encode($attributeValue);
+    }
+
+    /**
      * @param string $value
      * @return string|null
      */
@@ -94,10 +131,11 @@ class ImageUploader
 
     /**
      * @param $value
+     * @param string|null $extension
      * @return string
      */
-    public function getRandomFileName($value): string
+    public function getRandomFileName($value, ?string $extension = null): string
     {
-        return sprintf('%s.%s', md5(Str::random(128)), $this->getExtensionImageBase($value));
+        return sprintf('%s.%s', md5(Str::random(128)), $extension ?? $this->getExtensionImageBase($value));
     }
 }

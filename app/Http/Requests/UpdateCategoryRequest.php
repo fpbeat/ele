@@ -2,9 +2,10 @@
 
 namespace App\Http\Requests;
 
+use App\Rules\Admin\PageImage;
 use Illuminate\Foundation\Http\FormRequest;
 
-class SubscriptionRequest extends FormRequest
+class UpdateCategoryRequest extends FormRequest
 {
     /**
      * @return bool
@@ -21,8 +22,7 @@ class SubscriptionRequest extends FormRequest
     {
         return [
             'name' => 'required|max:255',
-            'duration' => 'required|integer|min:1',
-            'price' => 'required|numeric|min:0'
+            'image' => resolve(PageImage::class)
         ];
     }
 }

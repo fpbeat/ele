@@ -68,6 +68,8 @@ class PageCrudController extends CrudController
      */
     protected function setupListOperation(): void
     {
+        $this->crud->setDefaultPageLength(-1);
+
         $this->crud->setColumns([
             [
                 'name' => 'name',

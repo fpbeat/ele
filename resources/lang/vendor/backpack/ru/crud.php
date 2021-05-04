@@ -20,6 +20,10 @@ return [
     'form_tab_feedback' => 'Обратная связь',
     'form_tab_notifications' => 'Уведомления',
 
+    'form_tab_product' => 'Основное',
+    'form_tab_images' => 'Изображения',
+    'form_tab_ingredients' => 'Ингредиенты',
+
     'feedback_type_review' => 'Отзыв',
     'feedback_type_proposal' => 'Предложение',
 

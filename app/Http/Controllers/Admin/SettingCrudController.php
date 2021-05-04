@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Admin\Operations\SettingOperation;
 use App\Http\Requests\SettingRequest;
 use App\Models\Setting as SettingModel;
-use App\Notifications\SendFeedback;
 use App\Repositories\PageRepository;
 use App\Repositories\SettingRepository;
 use Backpack\CRUD\app\Http\Controllers\{CrudController, Operations\ListOperation};

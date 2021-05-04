@@ -2,14 +2,13 @@
 
 namespace App\Models;
 
+use App\Traits\ButtonVisibility;
 use Backpack\CRUD\app\Models\Traits\CrudTrait;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\{Builder, Model, Relations\BelongsTo};
 
 class TelegramUser extends Model
 {
-    use CrudTrait;
-    use HasFactory;
+    use CrudTrait, ButtonVisibility;
 
     /**
      * @var string[]

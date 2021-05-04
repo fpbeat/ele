@@ -29,4 +29,6 @@ Route::group(['prefix' => config('backpack.base.route_prefix', 'admin'), 'middle
     Route::crud('feedback', 'FeedbackCrudController');
     Route::crud('setting', 'SettingCrudController');
     Route::crud('telegram/user', 'TelegramUserCrudController');
+    Route::crud('categories', 'CategoriesCrudController');
+    Route::crud('catalog', 'CatalogCrudController');
 }); // this should be the absolute last line of this file

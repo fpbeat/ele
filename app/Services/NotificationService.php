@@ -40,6 +40,7 @@ class NotificationService
     public function sendIfEnabled($notification, ...$params): void
     {
         if ($this->isEnabled($notification)) {
+
             $this->send(...func_get_args());
         }
     }

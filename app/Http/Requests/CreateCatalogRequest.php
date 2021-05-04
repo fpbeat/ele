@@ -2,10 +2,10 @@
 
 namespace App\Http\Requests;
 
+use App\Rules\Admin\PageImage;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rule;
 
-class ChannelRequest extends FormRequest
+class CreateCatalogRequest extends FormRequest
 {
     /**
      * @return bool
@@ -22,7 +22,9 @@ class ChannelRequest extends FormRequest
     {
         return [
             'name' => 'required|max:255',
-            'channel_id' => ['required', 'integer', Rule::unique('channels')->ignore($this->id)],
+            'price' => 'required|numeric',
+            'amount' => 'required|integer|min:1',
+            'image' => resolve(PageImage::class)
         ];
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\ButtonVisibility;
 use Backpack\CRUD\app\Models\Traits\CrudTrait;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -10,7 +11,7 @@ use Illuminate\Support\Str;
 
 class Feedback extends Model
 {
-    use CrudTrait;
+    use CrudTrait, ButtonVisibility;
 
     /**
      * @var int

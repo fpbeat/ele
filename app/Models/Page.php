@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Backpack\ImageUploader;
+use App\Traits\ButtonVisibility;
 use Backpack\CRUD\app\Models\Traits\CrudTrait;
 use Illuminate\Database\Eloquent\Model;
 
@@ -13,8 +14,7 @@ use Kalnoy\Nestedset\NodeTrait;
 
 class Page extends Model
 {
-    use CrudTrait;
-    use NodeTrait;
+    use CrudTrait, NodeTrait, ButtonVisibility;
 
     /**
      * @var int
@@ -71,7 +71,7 @@ class Page extends Model
      */
     public function setImageAttribute($value): void
     {
-        $this->attributes['image'] = resolve(ImageUploader::class)->upload($this->image, $value, self::UPLOAD_DIRECTORY);
+        $this->attributes['image'] = resolve(ImageUploader::class)->upload($this->image, $value, static::UPLOAD_DIRECTORY);
     }
 
     /**
