@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Rules\Admin\CatalogCategory;
 use App\Rules\Admin\PageImage;
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -24,6 +25,7 @@ class CreateCatalogRequest extends FormRequest
             'name' => 'required|max:255',
             'price' => 'required|numeric',
             'amount' => 'required|integer|min:1',
+            'categories' => ['required', resolve(CatalogCategory::class)],
             'image' => resolve(PageImage::class)
         ];
     }

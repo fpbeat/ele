@@ -62,14 +62,29 @@ class Category extends Model
     /**
      * @return bool
      */
-    public function getUpdateButtonVisibleAttribute(): bool {
+    public function getUpdateButtonVisibleAttribute(): bool
+    {
         return !$this->isRoot();
     }
 
     /**
      * @return bool
      */
-    public function getDeleteButtonVisibleAttribute(): bool {
+    public function getDeleteButtonVisibleAttribute(): bool
+    {
         return !$this->isRoot();
+    }
+
+    /**
+     * @return string
+     */
+    public function getFullPathAttribute(): string
+    {
+        return $this->ancestorsAndSelf($this->attributes['id'])->pluck('name')->join(' > ');
+    }
+
+    public function scopeWhereNotRoot($query)
+    {
+        return $query->whereNotNull($this->getParentIdName());
     }
 }

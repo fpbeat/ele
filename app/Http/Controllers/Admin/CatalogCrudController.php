@@ -8,6 +8,7 @@ use App\Http\Requests\CreateCatalogRequest;
 use App\Http\Requests\CreateCategoryRequest;
 use App\Models\Catalog;
 use App\Models\UnitTypes;
+use App\Repositories\CategoryRepository;
 use Backpack\CRUD\app\Http\Controllers\CrudController;
 use Backpack\CRUD\app\Http\Controllers\Operations\CreateOperation;
 use Backpack\CRUD\app\Http\Controllers\Operations\DeleteOperation;
@@ -31,6 +32,17 @@ class CatalogCrudController extends CrudController
 //    use ShowOperation;
 
     /**
+     * @var CategoryRepository
+     */
+    private CategoryRepository $categoryRepository;
+
+    public function __construct(CategoryRepository $categoryRepository)
+    {
+        parent::__construct();
+        $this->categoryRepository = $categoryRepository;
+    }
+
+    /**
      * @return void
      * @throws \Exception
      */
@@ -46,6 +58,8 @@ class CatalogCrudController extends CrudController
      */
     protected function setupListOperation(): void
     {
+        $this->setupListFilters();
+
         $this->crud->setColumns([
             [
                 'name' => 'image',
@@ -55,11 +69,21 @@ class CatalogCrudController extends CrudController
 
                 'height' => 'auto',
                 'width' => '50px',
+                'orderable' => false,
             ],
             [
                 'name' => 'name',
                 'label' => 'Название',
-                'type' => 'text'
+                'type' => 'text',
+                'searchLogic' => function ($query, $column, $searchTerm) {
+                    $query->orWhere('name', 'like', '%' . $searchTerm . '%');
+                },
+            ],
+            [
+                'name' => 'created_at',
+                'label' => 'Категории',
+                'type' => 'closure',
+                'function' => fn($entry) => $entry->categories->pluck('name')->join('; ')
             ],
             [
                 'name' => 'price',
@@ -72,18 +96,16 @@ class CatalogCrudController extends CrudController
                 'suffix' => ' грн',
             ],
             [
-                'name' => 'active',
-                'label' => 'Активен',
-                'type' => 'check'
-            ],
-            [
                 'name' => 'amount',
                 'label' => 'Количество',
                 'type' => 'closure',
-                'function' => function ($entry) {
-                    return $entry->amount . ' ' . $entry->unit->name;
-                }
+                'function' => fn($entry) => sprintf('%d %s', $entry->amount, $entry->unit->name)
             ],
+            [
+                'name' => 'active',
+                'label' => 'Активен',
+                'type' => 'check'
+            ]
         ]);
     }
 
@@ -92,7 +114,6 @@ class CatalogCrudController extends CrudController
      */
     protected function setupCreateOperation()
     {
-
         $this->crud->setValidation(CreateCatalogRequest::class);
 
         CRUD::addColumn('name');
@@ -110,6 +131,14 @@ class CatalogCrudController extends CrudController
                 'type' => 'summernote',
                 'options' => config('backpack.fields.summernote.options'),
                 'tab' => trans('backpack::crud.form_tab_product')
+            ],
+            [
+                'name' => 'categories',
+                'label' => 'Категории',
+                'type' => 'select2_multiple',
+                'attribute' => 'full_path',
+                'tab' => trans('backpack::crud.form_tab_product'),
+                'options' => fn($query) => $query->whereNotRoot()->defaultOrder()->get(),
             ],
             [
                 'name' => 'price',
@@ -187,5 +216,48 @@ class CatalogCrudController extends CrudController
     protected function setupUpdateOperation(): void
     {
         $this->setupCreateOperation();
+    }
+
+    /**
+     * @return void
+     */
+    protected function setupListFilters(): void
+    {
+        $this->crud->addFilter([
+            'label' => 'Название',
+            'type' => 'text',
+            'name' => 'name',
+        ], false, fn($value) => $this->crud->addClause('where', 'name', 'LIKE', "%$value%"));
+
+        $this->crud->addFilter([
+            'type' => 'select2_multiple',
+            'name' => 'categories',
+            'label' => 'Категории'
+        ], $this->categoryRepository->getTreeArray(), function ($value) {
+            return $this->crud->query->whereHas('categories', fn($query) => $query->whereIn('category_id', json_decode($value)));
+        });
+
+        $this->crud->addFilter([
+            'type' => 'range',
+            'name' => 'updated_at',
+            'label' => 'Цена',
+            'label_from' => 'от',
+            'label_to' => 'до'
+        ], false, function ($value) {
+            $range = json_decode($value);
+
+            if ($range->from) {
+                $this->crud->addClause('where', 'price', '>=', (float)$range->from);
+            }
+            if ($range->to) {
+                $this->crud->addClause('where', 'price', '<=', (float)$range->to);
+            }
+        });
+
+        $this->crud->addFilter([
+            'type' => 'simple',
+            'name' => 'active',
+            'label' => 'Активен'
+        ], false, fn() => $this->crud->addClause('where', 'active', '=', 1));
     }
 }

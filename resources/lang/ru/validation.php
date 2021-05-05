@@ -145,12 +145,16 @@ return [
         'image' => 'Изображение',
         'parent_id' => 'Родитель',
         'message' => 'Сообщение',
-        'mailing_time' => 'Время рассылки'
+        'mailing_time' => 'Время рассылки',
+        'price' => 'Цена',
+        'amount' => 'Количество',
+        'categories' => 'Категории'
     ],
 
     'custom' => [
         'root_delete' => 'Вы не можете удалить начальную страницу',
         'time_range_start_required' => 'Поле :attribute (от) должно содержать время' ,
-        'time_range_end_required' => 'Поле :attribute (до) должно содержать время'
-    ],
+        'time_range_end_required' => 'Поле :attribute (до) должно содержать время',
+        'category_not_leaf' => 'Все категории должны быть конечными (не содержать потомков)'
+    ]
 ];

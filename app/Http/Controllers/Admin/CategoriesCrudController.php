@@ -78,7 +78,10 @@ class CategoriesCrudController extends CrudController
                 'orderable' => true,
                 'orderLogic' => function ($query, $column, $columnDirection) {
                     return $query->orderBy($this->crud->model->getLftName(), $columnDirection);
-                }
+                },
+                'searchLogic' => function ($query, $column, $searchTerm) {
+                    $query->orWhere('name', 'like', '%' . $searchTerm . '%');
+                },
             ]
         ]);
     }

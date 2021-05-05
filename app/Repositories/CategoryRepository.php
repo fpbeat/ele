@@ -22,11 +22,10 @@ class CategoryRepository
         return $tree;
     }
 
-
     /**
      * @return Page
      */
-    public function getRootNode(): Page
+    public function getRootNode(): Category
     {
         return Category::whereIsRoot()->firstOrFail();
     }
@@ -35,7 +34,7 @@ class CategoryRepository
      * @param int $id
      * @return Page
      */
-    public function getById(int $id): Page
+    public function getById(int $id): Category
     {
         return Category::whereId($id)->firstOrFail();
     }

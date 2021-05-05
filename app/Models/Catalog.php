@@ -7,6 +7,7 @@ use App\Traits\ButtonVisibility;
 use Backpack\CRUD\app\Models\Traits\CrudTrait;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Catalog extends Model
 {
@@ -56,5 +57,13 @@ class Catalog extends Model
     public function unit(): BelongsTo
     {
         return $this->belongsTo(UnitTypes::class);
+    }
+
+    /**
+     * @return BelongsToMany
+     */
+    public function categories(): BelongsToMany
+    {
+        return $this->belongsToMany(Category::class);
     }
 }
