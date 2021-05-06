@@ -14,4 +14,11 @@ jQuery(function ($) {
 
         window.location.replace($(this).data('url'))
     });
+
+    $(document).on('click', '[data-toggle="lightbox"]', function (event) {
+        event.preventDefault();
+        $(this).ekkoLightbox({
+            loadingMessage: 'Загрузка'
+        });
+    });
 });

@@ -17,3 +17,7 @@
 .btn-table-user:hover {
     color: #FFF !important;
 }
+
+#bp-filters-navbar .dropdown-menu {
+    min-width: 15rem;
+}

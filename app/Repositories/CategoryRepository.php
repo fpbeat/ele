@@ -3,7 +3,6 @@
 namespace App\Repositories;
 
 use App\Models\Category;
-use App\Models\Page;
 
 class CategoryRepository
 {
@@ -23,7 +22,30 @@ class CategoryRepository
     }
 
     /**
-     * @return Page
+     * @return array
+     */
+    public function getFullPathArray(): array
+    {
+        return Category::defaultOrder()
+            ->whereNotRoot()
+            ->get()
+            ->pluck('full_path', 'id')
+            ->toArray();
+    }
+
+    /**
+     * @param int $id
+     * @return mixed
+     */
+    public function getDescendantsAndSelf(int $id)
+    {
+        return Category::descendantsAndSelf($id)
+            ->pluck('id')
+            ->toArray();
+    }
+
+    /**
+     * @return Category
      */
     public function getRootNode(): Category
     {
@@ -32,7 +54,7 @@ class CategoryRepository
 
     /**
      * @param int $id
-     * @return Page
+     * @return Category
      */
     public function getById(int $id): Category
     {

@@ -3,18 +3,15 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Backpack\ImageUploader;
-use App\Http\Requests\CatalogRequest;
 use App\Http\Requests\CreateCatalogRequest;
-use App\Http\Requests\CreateCategoryRequest;
 use App\Models\Catalog;
-use App\Models\UnitTypes;
 use App\Repositories\CategoryRepository;
 use Backpack\CRUD\app\Http\Controllers\CrudController;
-use Backpack\CRUD\app\Http\Controllers\Operations\CreateOperation;
-use Backpack\CRUD\app\Http\Controllers\Operations\DeleteOperation;
-use Backpack\CRUD\app\Http\Controllers\Operations\ListOperation;
-use Backpack\CRUD\app\Http\Controllers\Operations\ShowOperation;
-use Backpack\CRUD\app\Http\Controllers\Operations\UpdateOperation;
+use Backpack\CRUD\app\Http\Controllers\Operations\{CreateOperation,
+    DeleteOperation,
+    ListOperation,
+    ShowOperation,
+    UpdateOperation};
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
 
 /**
@@ -28,8 +25,7 @@ class CatalogCrudController extends CrudController
     use CreateOperation;
     use UpdateOperation;
     use DeleteOperation;
-
-//    use ShowOperation;
+    use ShowOperation;
 
     /**
      * @var CategoryRepository
@@ -59,13 +55,14 @@ class CatalogCrudController extends CrudController
     protected function setupListOperation(): void
     {
         $this->setupListFilters();
+        $this->crud->removeButton('show');
 
         $this->crud->setColumns([
             [
                 'name' => 'image',
                 'label' => 'Фото',
                 'type' => 'image',
-                'disk' => 'public',
+                'disk' => ImageUploader::STORAGE_DISK,
 
                 'height' => 'auto',
                 'width' => '50px',
@@ -103,7 +100,7 @@ class CatalogCrudController extends CrudController
             ],
             [
                 'name' => 'active',
-                'label' => 'Активен',
+                'label' => 'Наличие',
                 'type' => 'check'
             ]
         ]);
@@ -115,8 +112,6 @@ class CatalogCrudController extends CrudController
     protected function setupCreateOperation()
     {
         $this->crud->setValidation(CreateCatalogRequest::class);
-
-        CRUD::addColumn('name');
 
         $this->crud->addFields([
             [
@@ -194,7 +189,7 @@ class CatalogCrudController extends CrudController
             ],
             [
                 'name' => 'extra_images',
-                'label' => 'Photos',
+                'label' => 'Дополнительные изображение',
                 'type' => 'upload_multiple',
                 'upload' => true,
                 'disk' => ImageUploader::STORAGE_DISK,
@@ -221,6 +216,61 @@ class CatalogCrudController extends CrudController
     /**
      * @return void
      */
+    protected function setupShowOperation(): void
+    {
+        $this->crud->set('show.setFromDb', false);
+
+        $this->crud->setColumns([
+            [
+                'name' => 'name',
+                'label' => 'Название',
+                'type' => 'text',
+            ],
+            [
+                'name' => 'created_at',
+                'label' => 'Категории',
+                'type' => 'closure',
+                'function' => fn($entry) => $entry->categories->pluck('name')->join('; ')
+            ],
+            [
+                'type' => 'closure',
+                'label' => 'Описание',
+                'function' => fn($entry) => $entry->clean_description ?: '-'
+            ],
+            [
+                'name' => 'price',
+                'label' => 'Цена',
+                'type' => 'number',
+
+                'decimals' => 2,
+                'dec_point' => '.',
+                'thousands_sep' => ' ',
+                'suffix' => ' грн',
+            ],
+            [
+                'name' => 'amount',
+                'label' => 'Количество',
+                'type' => 'closure',
+                'function' => fn($entry) => sprintf('%d %s', $entry->amount, $entry->unit->name)
+            ],
+            [
+                'name' => 'active',
+                'label' => 'Наличие',
+                'type' => 'radio',
+                'options' => ['Нет', 'Да']
+            ],
+            [
+                'name' => 'all_images',
+                'label' => 'Изображения',
+                'type' => 'catalog_images',
+                'disk' => ImageUploader::STORAGE_DISK,
+            ],
+        ]);
+    }
+
+    /**
+     * @return void
+     */
     protected function setupListFilters(): void
     {
         $this->crud->addFilter([
@@ -230,11 +280,11 @@ class CatalogCrudController extends CrudController
         ], false, fn($value) => $this->crud->addClause('where', 'name', 'LIKE', "%$value%"));
 
         $this->crud->addFilter([
-            'type' => 'select2_multiple',
+            'type' => 'select2',
             'name' => 'categories',
-            'label' => 'Категории'
-        ], $this->categoryRepository->getTreeArray(), function ($value) {
-            return $this->crud->query->whereHas('categories', fn($query) => $query->whereIn('category_id', json_decode($value)));
+            'label' => 'Категории',
+        ], $this->categoryRepository->getFullPathArray(), function ($value) {
+            return $this->crud->query->whereHas('categories', fn($query) => $query->whereIn('category_id', $this->categoryRepository->getDescendantsAndSelf($value)));
         });
 
         $this->crud->addFilter([

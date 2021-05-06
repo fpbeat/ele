@@ -68,13 +68,7 @@
         $crud->markFieldTypeAsLoaded($field);
     @endphp
 
-    @push('crud_fields_styles')
-        <link href="{{ asset('packages/ekko-lightbox/dist/ekko-lightbox.css') }}" rel="stylesheet" type="text/css"/>
-    @endpush
-
     @push('crud_fields_scripts')
-        <script src="{{ asset('packages/ekko-lightbox/dist/ekko-lightbox.min.js') }}"></script>
-
         <!-- no scripts -->
         <script>
             function bpFieldInitUploadMultipleElement(element) {
@@ -100,13 +94,6 @@
                     inputLabel.html("Файлы выбраны. После сохранения они появятся выше");
                     // remove the hidden input, so that the setXAttribute method is no longer triggered
                     $(this).next("input[type=hidden]:not([name='clear_" + fieldName + "[]'])").remove();
-                });
-
-                $(document).on('click', '[data-toggle="lightbox"]', function (event) {
-                    event.preventDefault();
-                    $(this).ekkoLightbox({
-                        loadingMessage: 'Загрузка'
-                    });
                 });
             }
         </script>
