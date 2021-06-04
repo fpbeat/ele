@@ -1,7 +1,7 @@
 {{-- image column type --}}
 @php
   $value = data_get($entry, $column['name']);
-  
+
   if($value) {
     $column['height'] = $column['height'] ?? "25px";
     $column['width'] = $column['width'] ?? "auto";
@@ -23,6 +23,7 @@
     $column['wrapper']['element'] = $column['wrapper']['element'] ?? 'a';
     $column['wrapper']['href'] = $column['wrapper']['href'] ?? $href;
     $column['wrapper']['target'] = $column['wrapper']['target'] ?? '_blank';
+    $column['wrapper']['data-toggle'] = $column['wrapper']['data-toggle'] ?? 'lightbox';
   }
 @endphp
 
@@ -31,7 +32,7 @@
     -
   @else
     @includeWhen(!empty($column['wrapper']), 'crud::columns.inc.wrapper_start')
-        <img src="{{ $src }}" data-toggle="lightbox" style="
+        <img src="{{ $src }}" style="
         max-height: {{ $column['height'] }};
         width: {{ $column['width'] }};
         border-radius: {{ $column['radius'] }};"

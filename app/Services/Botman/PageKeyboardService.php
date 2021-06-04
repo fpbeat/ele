@@ -53,9 +53,9 @@ class PageKeyboardService
     {
         switch ($single['type']) {
             case 'external_link':
-                return KeyboardButton::create($single['name'])->url($single['link']);
+                return KeyboardButton::create($single['name'])->url($single['link'] ?? null);
             default:
-                return KeyboardButton::create($single['name'])->callbackData($single['page_id']);
+                return KeyboardButton::create($single['name'])->callbackData($single['page_id'] ?? null);
         }
     }
 

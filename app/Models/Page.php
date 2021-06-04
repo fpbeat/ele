@@ -3,23 +3,19 @@
 namespace App\Models;
 
 use App\Backpack\ImageUploader;
+use App\Contracts\NodeCategoryInterface;
 use App\Traits\ButtonVisibility;
+use App\Traits\NestedSetsNode;
 use Backpack\CRUD\app\Models\Traits\CrudTrait;
 use Illuminate\Database\Eloquent\Model;
 
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Str;
 use Kalnoy\Nestedset\NodeTrait;
 
-class Page extends Model
+class Page extends Model implements NodeCategoryInterface
 {
-    use CrudTrait, NodeTrait, ButtonVisibility;
-
-    /**
-     * @var int
-     */
-    const LONG_DESCRIPTION_LENGTH = 1024;
+    use CrudTrait, NodeTrait, NestedSetsNode, ButtonVisibility;
 
     /**
      * @var string
@@ -35,7 +31,7 @@ class Page extends Model
      * @var string[]
      */
     protected $casts = [
-        'buttons' => 'array',
+        'buttons' => 'array'
     ];
 
     /**
@@ -64,38 +60,6 @@ class Page extends Model
     public function getRgtName(): string
     {
         return 'rgt';
-    }
-
-    /**
-     * @param $value
-     */
-    public function setImageAttribute($value): void
-    {
-        $this->attributes['image'] = resolve(ImageUploader::class)->upload($this->image, $value, static::UPLOAD_DIRECTORY);
-    }
-
-    /**
-     * @return string
-     */
-    public function getCleanNameAttribute(): string
-    {
-        return Str::cleanEmojis($this->attributes['name']);
-    }
-
-    /**
-     * @return string
-     */
-    public function getCleanDescriptionAttribute(): string
-    {
-        return Str::cleanupSummernote($this->attributes['description']);
-    }
-
-    /**
-     * @return bool
-     */
-    public function getHasLongDescriptionAttribute(): bool
-    {
-        return Str::length($this->cleanDescription) >= static::LONG_DESCRIPTION_LENGTH;
     }
 
     /**

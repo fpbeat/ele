@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Backpack\ImageUploader;
 use App\Http\Requests\CreatePageRequest;
 use App\Http\Requests\UpdatePageRequest;
+use App\Models\Feedback;
 use App\Models\Page;
 use App\Repositories\PageRepository;
 use Backpack\CRUD\app\Http\Controllers\CrudController;
@@ -88,7 +89,11 @@ class PageCrudController extends CrudController
             [
                 'name' => 'type',
                 'label' => 'Тип страницы',
-                'type' => 'relationship'
+                'type' => 'relationship',
+                'wrapper' => [
+                    'element' => 'button',
+                    'class' => fn() => 'btn btn-sm btn-no-active btn-outline-success'
+                ]
             ]
         ]);
     }

@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use App\Models\Page;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 
 class PageRepository
@@ -37,6 +38,15 @@ class PageRepository
     public function getById(int $id): Page
     {
         return Page::whereId($id)->firstOrFail();
+    }
+
+    /**
+     * @param string $type
+     * @return Page
+     */
+    public function getByConversationType(string $type): Page
+    {
+        return Page::whereHas('type', fn(Builder $query) => $query->whereConversation($type))->firstOrFail();
     }
 
     /**

@@ -54,10 +54,21 @@ class CategoryRepository
 
     /**
      * @param int $id
-     * @return Category
+     * @return null|Category
      */
-    public function getById(int $id): Category
+    public function getById(int $id): ?Category
     {
-        return Category::whereId($id)->firstOrFail();
+        return Category::whereId($id)->first();
+    }
+
+    /**
+     * @param int $id
+     * @return array
+     */
+    public function getDescendants(int $id): array
+    {
+        return collect($this->getDescendantsAndSelf($id))
+            ->reject(fn($item) => $item === $id)
+            ->toArray();
     }
 }

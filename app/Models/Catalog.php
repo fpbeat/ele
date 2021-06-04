@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Backpack\ImageUploader;
 use App\Traits\ButtonVisibility;
 use Backpack\CRUD\app\Models\Traits\CrudTrait;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -74,6 +75,15 @@ class Catalog extends Model
             ->prepend($this->image)
             ->filter()
             ->toArray();
+    }
+
+    /**
+     * @param $query
+     * @return mixed
+     */
+    public function scopeAvailable(Builder $query): Builder
+    {
+        return $query->where('active', '=', static::STATUS_AVAILABLE);
     }
 
     /**

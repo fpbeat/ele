@@ -3,9 +3,14 @@
 namespace App\Botman\Traits;
 
 use App\Backpack\ImageUploader;
+use App\Contracts\NodeCategoryInterface;
 use App\Models\Page;
 use Illuminate\Support\Arr;
-use BotMan\BotMan\{BotMan, Messages\Attachments\Image, Messages\Incoming\IncomingMessage, Messages\Outgoing\OutgoingMessage};
+use BotMan\BotMan\{BotMan,
+    Messages\Attachments\Image,
+    Messages\Incoming\IncomingMessage,
+    Messages\Outgoing\OutgoingMessage
+};
 use Illuminate\Support\Facades\Storage;
 
 trait MessageTrait
@@ -22,10 +27,10 @@ trait MessageTrait
     }
 
     /**
-     * @param Page $node
+     * @param NodeCategoryInterface $node
      * @return OutgoingMessage
      */
-    protected function imageMessage(Page $node): OutgoingMessage
+    protected function imageMessage(NodeCategoryInterface $node): OutgoingMessage
     {
         $message = OutgoingMessage::create($node->clean_description);
 
@@ -46,14 +51,23 @@ trait MessageTrait
 
     /**
      * @param Page $node
-     * @param BotMan|null $botMan
+     * @param BotMan|null $bot
      */
-    protected function nodeConversation(Page $node, ?BotMan $botMan = null): void
+    protected function nodeConversation(Page $node, ?BotMan $bot = null): void
     {
-        $instance = $botMan ?? $this->bot;
+        $instance = $bot ?? $this->bot;
 
         $instance->startConversation(resolve($node->type->conversation, [
             'node' => $node
         ]));
+    }
+
+    /**
+     * @param BotMan $bot
+     * @param string $name
+     */
+    protected function removeKeyboardWithMessage(BotMan $bot, string $name): void
+    {
+        $bot->reply(trans('chatbot.keyboard_handle_open', ['name' => $name]), $this->removeKeyboard());
     }
 }

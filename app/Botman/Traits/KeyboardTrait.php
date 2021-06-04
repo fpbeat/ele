@@ -2,9 +2,15 @@
 
 namespace App\Botman\Traits;
 
+use App\Botman\Conversations\BasketConversation;
+use App\Botman\Conversations\MainConversation;
+use App\Contracts\NodeCategoryInterface;
 use App\Models\Page;
 use App\Services\Botman\PageKeyboardService;
+use App\Services\Keyboard\InlineButton;
+use App\Services\Keyboard\KeyboardBuilder;
 use BotMan\Drivers\Telegram\Extensions\Keyboard;
+use Illuminate\Support\Str;
 
 trait KeyboardTrait
 {
@@ -13,7 +19,7 @@ trait KeyboardTrait
      * @param Page $node
      * @return Keyboard
      */
-    protected function pageKeyboard(Keyboard $keyboard, Page $node): Keyboard
+    protected function pageKeyboard(Keyboard $keyboard, NodeCategoryInterface $node): Keyboard
     {
         return resolve(PageKeyboardService::class)->buildKeyboard(
             $keyboard,
@@ -44,5 +50,23 @@ trait KeyboardTrait
                     'remove_keyboard' => true
                 ]
             )];
+    }
+
+    /**
+     * @param Keyboard $keyboard
+     * @return array
+     */
+    protected function catalogKeyboard(Keyboard $keyboard): array
+    {
+        $buttons = collect([
+            $this->pageRepository->getByConversationType(BasketConversation::class),
+            $this->pageRepository->getByConversationType(MainConversation::class)
+        ]);
+
+        $builder = KeyboardBuilder::fromCollection($buttons)
+            ->each(fn(InlineButton $item) => $item->type(InlineButton::BUTTON_TYPE_INTERNAL))
+            ->all();
+
+        return resolve(PageKeyboardService::class)->buildKeyboard($keyboard, $builder, 2, 0)->toArray();
     }
 }

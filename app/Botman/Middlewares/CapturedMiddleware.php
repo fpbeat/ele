@@ -27,17 +27,6 @@ class CapturedMiddleware implements Captured
     public function captured(IncomingMessage $message, $next, BotMan $bot)
     {
 
-        //  info($message->getPayload());
-
-
-
-//        if ($payload['reply_markup']) {
-//            $dd = json_decode($payload['reply_markup'], true);
-//            if (Arr::has($dd, 'keyboard')) {
-//                dd($bot);
-//            }
-//        }
-        //dd($bot->getMessage()->getPayload());
 //        $ttl = $this->getStorageValue('coupon.ttl');
 //
 //        if ($this->getStorageValue('coupon.locked') && Carbon::parse($ttl)->lt(now())) {

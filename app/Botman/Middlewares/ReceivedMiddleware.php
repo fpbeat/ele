@@ -32,13 +32,7 @@ class ReceivedMiddleware implements Received
     {
         $payload = $message->getPayload();
 
-
-      //  dd($payload['reply_markup']);
-        if (Arr::has($payload, 'reply_markup.keyboard')) {
-            dd('yes');
-        }
-
-        if (!Arr::get($payload, 'from.is_bot')) {
+        if ($payload && !Arr::get($payload, 'from.is_bot')) {
             $this->telegramUserRepository->store($payload['from']);
 
             if ($this->handleLockedUser(Arr::get($payload, 'from.id', 0))) {

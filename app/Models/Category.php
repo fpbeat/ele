@@ -3,15 +3,17 @@
 namespace App\Models;
 
 use App\Backpack\ImageUploader;
+use App\Contracts\NodeCategoryInterface;
 use App\Traits\ButtonVisibility;
+use App\Traits\NestedSetsNode;
 use Backpack\CRUD\app\Models\Traits\CrudTrait;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
 use Kalnoy\Nestedset\NodeTrait;
 
-class Category extends Model
+class Category extends Model implements NodeCategoryInterface
 {
-    use CrudTrait, NodeTrait, ButtonVisibility;
+    use CrudTrait, NodeTrait, NestedSetsNode, ButtonVisibility;
 
     /**
      * @var string
@@ -52,37 +54,9 @@ class Category extends Model
     }
 
     /**
-     * @param $value
+     * @param $query
+     * @return mixed
      */
-    public function setImageAttribute($value): void
-    {
-        $this->attributes['image'] = resolve(ImageUploader::class)->upload($this->image, $value, static::UPLOAD_DIRECTORY);
-    }
-
-    /**
-     * @return bool
-     */
-    public function getUpdateButtonVisibleAttribute(): bool
-    {
-        return !$this->isRoot();
-    }
-
-    /**
-     * @return bool
-     */
-    public function getDeleteButtonVisibleAttribute(): bool
-    {
-        return !$this->isRoot();
-    }
-
-    /**
-     * @return string
-     */
-    public function getFullPathAttribute(): string
-    {
-        return $this->ancestorsAndSelf($this->attributes['id'])->pluck('name')->join(' > ');
-    }
-
     public function scopeWhereNotRoot($query)
     {
         return $query->whereNotNull($this->getParentIdName());

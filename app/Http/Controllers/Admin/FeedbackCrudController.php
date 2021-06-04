@@ -113,7 +113,7 @@ class FeedbackCrudController extends CrudController
                     'class' => function ($crud, $column, $entry) {
                         return $entry->type === Feedback::TYPE_REVIEW ? 'btn btn-sm btn-no-active btn-outline-success' : 'btn btn-sm btn-no-active btn-outline-danger';
                     }
-                ],
+                ]
             ],
             [
                 'name' => 'created_at',

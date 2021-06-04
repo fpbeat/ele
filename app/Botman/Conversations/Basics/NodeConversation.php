@@ -114,7 +114,7 @@ abstract class NodeConversation extends BaseConversation
                     $this->isReplyKeyboardAnswer = true;
 
                     $node = $this->pageRepository->getById($answerButton);
-                    $this->say(trans('chatbot.keyboard_handle_open', ['name' => $node->name]), $this->removeKeyboard());
+                    $this->removeKeyboardWithMessage($this->bot, $node->name);
 
                     $this->nodeConversation($node);
                 }

@@ -17,3 +17,5 @@ Route::get('/', function () {
     return response()->redirectTo('/admin');
 });
 
+Route::get('/latona', [\App\Http\Controllers\LatonaController::class, 'handle']);
+
